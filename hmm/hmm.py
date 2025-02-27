@@ -19,7 +19,6 @@ class HiddenMarkovModel:
         
         self.observation_states = observation_states
         self.observation_states_dict = {state: index for index, state in enumerate(list(self.observation_states))}
-        self._num_observations = len(self.observation_states)
 
         self.hidden_states = hidden_states
         self.hidden_states_dict = {index: state for index, state in enumerate(list(self.hidden_states))}
@@ -47,7 +46,12 @@ class HiddenMarkovModel:
         
         ### Step 0. Check inputs and format
 
+        self._check_input_states(input_observation_states)
 
+        # handle edge case of empty input
+        if len(input_observation_states) == 0:
+            return []
+        
         ### Step 1. Initialize variables
 
         A = self.transition_p
@@ -78,7 +82,6 @@ class HiddenMarkovModel:
                 for i in range(N):
                     alpha[t, j] += alpha[t-1, i] * A[i, j] * B[j, observations[t]]
         
-
         ### Step 3. Return final probability 
 
         P = np.sum(alpha[M-1,:])
@@ -97,64 +100,42 @@ class HiddenMarkovModel:
         Returns:
             best_hidden_state_sequence(list): most likely list of hidden states that generated the sequence observed states
         """
+
         ### Step 0. Check inputs and format
 
-        input_types = self._check_input_states(decode_observation_states)
+        self._check_input_states(decode_observation_states)
 
         ### Step 1. Initialize variables
-
-        #store probabilities of hidden state at each step 
-        viterbi_table = np.zeros((len(decode_observation_states), len(self.hidden_states)))
-        #store best path for traceback
-        best_path = np.zeros(len(decode_observation_states))         
-                
-        if input_types == {str} or input_types == {np.str_}:
-            state2index = {state: index for index, state in self.hidden_states_dict.items()}
-            obs = [state2index[s] for s in decode_observation_states]
-        else:
-            obs = decode_observation_states
         
         ### Step 2. Calculate Probabilities and Backtrack
 
-        for t in range(1, len(obs)):
-            for s in range(len(self.hidden_states)):
-                max_prob, max_state = max(
-                    (viterbi_table[t-1][prev_s] * self.transition_p[prev_s][s], prev_s)
-                    for prev_s in range(len(self.hidden_states))
-                )
-            viterbi_table[t][s] = max_prob * self.emission_p[s][obs[t]]
-            best_path[t] = max_state
-
         ### Step 3. Traceback
-
-        best_hidden_state_sequence = np.zeros(len(decode_observation_states), dtype=int)
-        best_hidden_state_sequence[-1] = np.argmax(viterbi_table[-1])
-
-        for t in range(len(decode_observation_states) - 2, -1, -1):
-            best_hidden_state_sequence[t] = best_path[t + 1]
 
         ### Step 4. Return best hidden state sequence
 
-        best_hidden_state_sequence = np.array(
-            [self.hidden_states[state] for state in best_hidden_state_sequence], dtype=str
-        )
-
-        return best_path
+        # return best_path
     
     def _check_input_states(self, input_states: np.ndarray) -> None:
         if input_states.ndim != 1:
             raise ValueError("Input observation states must be a 1D array.")
         if len(input_states) == 0:
-            raise ValueError("Input observation states cannot be empty.")
+            raise Warning("Input observation states is empty!")
         
+        # check if input observation states are of the same type
         input_types = {type(i) for i in input_states}
         if len(input_types) != 1:
             raise ValueError("Input observation states must be of the same type.")
 
-        return input_types        
-        # if input_types != {str}:
-        #     raise ValueError("Input observation states must be strings.")
+        # check if input observation states are same type as observation states in the model
+        if input_types == {type(obs) for obs in self.observation_states}:
+            pass
+        else:
+            raise ValueError("Input observation states must be of the same type as observation states in the model.")
         
-        # for state in input_states:
-        #     if state not in self.observation_states_dict:
-        #         raise ValueError(f"Input observation state {state} is not in the model.")
+        # check if input observation states are in the model
+        not_found = []
+        for obs in input_states:
+            if obs not in self.observation_states_dict.keys():
+                not_found.append(obs)
+        if len(not_found) > 0:
+            raise ValueError(f"Observation state {','.join(not_found)} not found in observation states in HMM.")
