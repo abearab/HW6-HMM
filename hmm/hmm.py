@@ -90,8 +90,6 @@ class HiddenMarkovModel:
 
     def viterbi(self, decode_observation_states: np.ndarray) -> list:
         """
-        TODO
-
         This function runs the viterbi algorithm on an input sequence of observation states
 
         Args:
