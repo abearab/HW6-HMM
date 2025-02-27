@@ -121,7 +121,7 @@ class HiddenMarkovModel:
         N = pi.shape[0]
         
         alpha = np.zeros((M, N))
-        backpointer = np.zeros((M, N))
+        backpointer = np.zeros((M, N-1))
 
         ### Step 2. Calculate Probabilities and Backtrack
 
@@ -137,10 +137,10 @@ class HiddenMarkovModel:
                     A[:, j], 
                     alpha[t-1, :]
                 )
-                alpha[t, j] = np.max(product) * B[j, observations[t]]
+                alpha[j, t] = np.max(product) * B[j, observations[t]]
                 
                 # Update Backpointer Matrix
-                backpointer[t, j] = np.argmax(product)
+                backpointer[j, t-1] = np.argmax(product)
         
         ### Step 3. Traceback
 
