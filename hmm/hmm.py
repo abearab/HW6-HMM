@@ -159,7 +159,7 @@ class HiddenMarkovModel:
 
         ### Step 4. Return best hidden state sequence
 
-        best_path = [self.hidden_states_dict[i] for i in best_path]
+        best_path = np.array([self.hidden_states_dict[i] for i in best_path])
 
         print(f"Viterbi Path: {best_path}")
         
