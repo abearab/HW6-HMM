@@ -7,9 +7,9 @@ In this assignment, you'll implement the Forward and Viterbi Algorithms (dynamic
 
 I found [this video series](https://www.youtube.com/playlist?list=PLM8wYQRetTxBkdvBtz-gw8b9lcVkdXQKV) helpful for understanding the hidden markov model and the forward algorithm. _The efficient way to compute the probability of a sequence of observations given a model is to use the forward algorithm_.
 
-Also, I found these two github repos helpful for understanding the viterbi algorithm:
-- https://github.com/ghadlich/ViterbiAlgorithm/blob/main/python/ViterbiAlgorithm.py
-- https://github.com/AzharuddinKazi/Forward-Algorithm-HMM/blob/master/Forward_Algorithm_HMM.py
+Also, I found these two github repos helpful for understanding the forward and viterbi algorithms:
+- [`Forward_Algorithm_HMM.py`](https://github.com/AzharuddinKazi/Forward-Algorithm-HMM/blob/master/Forward_Algorithm_HMM.py)
+- [`ViterbiAlgorithm.py`](https://github.com/ghadlich/ViterbiAlgorithm/blob/main/python/ViterbiAlgorithm.py)
 
 <details><summary>Click here</summary>
 
