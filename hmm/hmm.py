@@ -120,14 +120,14 @@ class HiddenMarkovModel:
         M = len(observations)
         N = pi.shape[0]
         
-        alpha = np.zeros((M, N))
-        backpointer = np.zeros((M, N-1))
+        prob_mat = np.zeros((N, M))
+        backpointer = np.zeros((N, M-1), dtype=int)
 
         ### Step 2. Calculate Probabilities and Backtrack
 
         # Compute Initial Probabilities
         for j in range(N):
-            alpha[j, 0] = pi[j] * B[j, observations[0]]
+            prob_mat[j, 0] = pi[j] * B[j, observations[0]]
             backpointer[j,0] = 0 # no previous state at time 0
 
         # Compute Accumulated Probability and Backtrack Matrices
@@ -135,9 +135,9 @@ class HiddenMarkovModel:
             for j in range(N):
                 product = np.multiply(
                     A[:, j], 
-                    alpha[t-1, :]
+                    prob_mat[:, t-1]
                 )
-                alpha[j, t] = np.max(product) * B[j, observations[t]]
+                prob_mat[j, t] = np.max(product) * B[j, observations[t]]
                 
                 # Update Backpointer Matrix
                 backpointer[j, t-1] = np.argmax(product)
@@ -148,10 +148,10 @@ class HiddenMarkovModel:
         best_path = np.zeros(M, dtype=int)
 
         # Set last entry to most likely state
-        best_path[-1] = np.argmax(alpha[-1, :])
+        best_path[-1] = np.argmax(prob_mat[-1, :])
         
         # Set Viterbi Probability
-        viterbi_prob = alpha[:, -1][best_path[-1]]
+        viterbi_prob = prob_mat[:, -1][best_path[-1]]
 
         # Starting from the end-1 to backtrack viterbi path
         for i in range(M-2, 0, -1):
