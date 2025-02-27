@@ -42,34 +42,48 @@ class HiddenMarkovModel:
         Returns:
             forward_probability (float): forward probability (likelihood) for the input observed sequence  
         """
-
-        ### Step 0. Check inputs and format
+        # I found this useful for my forward algorithm implementation:
+        # https://github.com/AzharuddinKazi/Forward-Algorithm-HMM/blob/master/Forward_Algorithm_HMM.py
         
-        input_types = self._check_input_states(input_observation_states)
+        ### Step 0. Check inputs and format
+
 
         ### Step 1. Initialize variables
+
+        A = self.transition_p
+        pi = self.prior_p
+        B = self.emission_p
+        observations = [self.observation_states_dict[obs] for obs in input_observation_states]
+
+        M = len(observations)
+        N = pi.shape[0]
         
-        if input_types == {str} or input_types == {np.str_}:
-            states = [self.observation_states_dict[s] for s in input_observation_states]
-        else:
-            states = input_observation_states
-
-        start_state = states[0] 
-        prob = self.prior_p[start_state]
-        prev_state = start_state
-
+        # Initialization
+        alpha = np.zeros((M, N))
+            
+        # Since their are no previous states. the probability of being in state 1 at time 1 is given as product of:
+        # 1. Initial Probability of being in state 1
+        # 2. Emmision Probability of symbol O(1) being in state 1
+        alpha[0, :] = pi * B[:,observations[0]]
+            
         ### Step 2. Calculate probabilities
 
-        for i in range(1, len(states)):
-            curr_state = states[i]
-            prob *= self.transition_p[prev_state][curr_state]
-            prev_state = curr_state
+        # if we know the previous state i,then the probability of being in state j at time t+1 is given as product of:
+        # 1. Probability of being in state i at time t
+        # 2. Transition probability of going from state i to state j
+        # 3. Emmision Probability of symbol O(t+1) being in state j
+
+        for t in range(1, M):
+            for j in range(N):
+                for i in range(N):
+                    alpha[t, j] += alpha[t-1, i] * A[i, j] * B[j, observations[t]]
+        
 
         ### Step 3. Return final probability 
-        
-        forward_probability = prob
 
-        return forward_probability
+        P = np.sum(alpha[M-1,:])
+
+        return P
 
     def viterbi(self, decode_observation_states: np.ndarray) -> list:
         """
