@@ -37,7 +37,7 @@ def test_mini_weather():
     assert np.isclose(forward_prob, 0.035064411621093736, atol=1e-6), "Forward probability does not match expected value"
     
     # check viterbi path
-    assert viterbi_path == mini_input['best_hidden_state_sequence'], "Viterbi path does not match expected path"
+    assert all(viterbi_path == mini_input['best_hidden_state_sequence']), "Viterbi path does not match expected path"
 
 
 def test_full_weather():
@@ -72,4 +72,4 @@ def test_full_weather():
     assert np.isclose(forward_prob, 1.6864513843961297e-11, atol=1e-6), "Forward probability does not match expected value"
 
     # check viterbi path
-    assert viterbi_path == full_input['best_hidden_state_sequence'], "Viterbi path does not match expected path"
+    assert all(viterbi_path == full_input['best_hidden_state_sequence']), "Viterbi path does not match expected path"
