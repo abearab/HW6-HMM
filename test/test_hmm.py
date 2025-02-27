@@ -20,7 +20,7 @@ def test_mini_weather():
     mini_input=np.load('./data/mini_weather_sequences.npz')
 
     # instantiate HMM
-    hmm = HiddenMarkovModel(
+    model = HiddenMarkovModel(
         observation_states=mini_hmm['observation_states'], 
         hidden_states=mini_hmm['hidden_states'], 
         prior_p=mini_hmm['prior_p'], 
@@ -29,9 +29,9 @@ def test_mini_weather():
     )
 
     # run forward algorithm
-    forward_prob = hmm.forward(mini_input['observation_state_sequence'])
+    forward_prob = model.forward(mini_input['observation_state_sequence'])
     # run viterbi algorithm
-    viterbi_path = hmm.viterbi(mini_input['observation_state_sequence'])
+    viterbi_path = model.viterbi(mini_input['observation_state_sequence'])
 
     # check forward probability
     assert np.isclose(forward_prob, 0.035064411621093736, atol=1e-6), "Forward probability does not match expected value"
@@ -55,7 +55,7 @@ def test_full_weather():
     full_input=np.load('./data/full_weather_sequences.npz')
 
     # instantiate HMM
-    hmm = HiddenMarkovModel(
+    model = HiddenMarkovModel(
         observation_states=full_hmm['observation_states'], 
         hidden_states=full_hmm['hidden_states'], 
         prior_p=full_hmm['prior_p'], 
@@ -64,9 +64,9 @@ def test_full_weather():
     )
 
     # run forward algorithm
-    forward_prob = hmm.forward(full_input['observation_state_sequence'])
+    forward_prob = model.forward(full_input['observation_state_sequence'])
     # run viterbi algorithm
-    viterbi_path = hmm.viterbi(full_input['observation_state_sequence'])
+    viterbi_path = model.viterbi(full_input['observation_state_sequence'])
 
     # check forward probability
     assert np.isclose(forward_prob, 1.6864513843961297e-11, atol=1e-6), "Forward probability does not match expected value"
