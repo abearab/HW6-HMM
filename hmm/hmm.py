@@ -26,9 +26,7 @@ class HiddenMarkovModel:
         self.prior_p= prior_p
         self.transition_p = transition_p
         self.emission_p = emission_p
-        self.viterbi_path = []
-        self.viterbi_probability = 0
-
+        
     def forward(self, input_observation_states: np.ndarray) -> float:
         """
         This function runs the forward algorithm on an input sequence of observation states
@@ -84,9 +82,11 @@ class HiddenMarkovModel:
         
         ### Step 3. Return final probability 
 
-        P = np.sum(alpha[M-1,:])
+        forward_prob = np.sum(alpha[M-1,:])
 
-        return P
+        print(f"Forward Probability: {forward_prob}")
+
+        return forward_prob
 
     def viterbi(self, decode_observation_states: np.ndarray) -> list:
         """
@@ -100,20 +100,72 @@ class HiddenMarkovModel:
         Returns:
             best_hidden_state_sequence(list): most likely list of hidden states that generated the sequence observed states
         """
+        # I found this useful for my viterbi algorithm implementation:
+        # https://github.com/ghadlich/ViterbiAlgorithm/blob/main/python/ViterbiAlgorithm.py
 
         ### Step 0. Check inputs and format
 
         self._check_input_states(decode_observation_states)
 
-        ### Step 1. Initialize variables
+        # handle edge case of empty input
+        if len(decode_observation_states) == 0:
+            return []
         
+        ### Step 1. Initialize variables
+        A = self.transition_p
+        pi = self.prior_p
+        B = self.emission_p
+        observations = [self.observation_states_dict[obs] for obs in decode_observation_states]
+        
+        M = len(observations)
+        N = pi.shape[0]
+        
+        alpha = np.zeros((M, N))
+        backpointer = np.zeros((M, N))
+
         ### Step 2. Calculate Probabilities and Backtrack
 
+        # Compute Initial Probabilities
+        for j in range(N):
+            alpha[j, 0] = pi[j] * B[j, observations[0]]
+            backpointer[j,0] = 0 # no previous state at time 0
+
+        # Compute Accumulated Probability and Backtrack Matrices
+        for t in range(1, M):
+            for j in range(N):
+                product = np.multiply(
+                    A[:, j], 
+                    alpha[t-1, :]
+                )
+                alpha[t, j] = np.max(product) * B[j, observations[t]]
+                
+                # Update Backpointer Matrix
+                backpointer[t, j] = np.argmax(product)
+        
         ### Step 3. Traceback
+
+        # Set Initial Path to 0
+        best_path = np.zeros(M, dtype=int)
+
+        # Set last entry to most likely state
+        best_path[-1] = np.argmax(alpha[-1, :])
+        
+        # Set Viterbi Probability
+        viterbi_prob = alpha[:, -1][best_path[-1]]
+
+        # Starting from the end-1 to backtrack viterbi path
+        for i in range(M-2, 0, -1):
+            best_path[i] = backpointer[int(best_path[i+1]), i]
 
         ### Step 4. Return best hidden state sequence
 
-        # return best_path
+        best_path = [self.hidden_states_dict[i] for i in best_path]
+
+        print(f"Viterbi Path: {best_path}")
+        
+        print(f"Viterbi Probability: {viterbi_prob}")
+
+        return best_path
     
     def _check_input_states(self, input_states: np.ndarray) -> None:
         if input_states.ndim != 1:

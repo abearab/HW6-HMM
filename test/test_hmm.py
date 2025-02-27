@@ -30,14 +30,14 @@ def test_mini_weather():
 
     # run forward algorithm
     forward_prob = model.forward(mini_input['observation_state_sequence'])
-    # # run viterbi algorithm
-    # viterbi_path = model.viterbi(mini_input['observation_state_sequence'])
+    # run viterbi algorithm
+    viterbi_path = model.viterbi(mini_input['observation_state_sequence'])
 
     # check forward probability
     assert np.isclose(forward_prob, 0.035064411621093736, atol=1e-6), "Forward probability does not match expected value"
     
-    # # check for edge cases
-    # assert len(viterbi_path) == len(mini_input['observation_state_sequence']), "Viterbi path length does not match input sequence length"
+    # check viterbi path
+    assert viterbi_path == mini_input['best_hidden_state_sequence'], "Viterbi path does not match expected path"
 
 
 def test_full_weather():
@@ -65,11 +65,11 @@ def test_full_weather():
 
     # run forward algorithm
     forward_prob = model.forward(full_input['observation_state_sequence'])
-    # # run viterbi algorithm
-    # viterbi_path = model.viterbi(full_input['observation_state_sequence'])
+    # run viterbi algorithm
+    viterbi_path = model.viterbi(full_input['observation_state_sequence'])
 
     # check forward probability
     assert np.isclose(forward_prob, 1.6864513843961297e-11, atol=1e-6), "Forward probability does not match expected value"
 
-    # # check for edge cases
-    # assert len(viterbi_path) == len(full_input['observation_state_sequence']), "Viterbi path length does not match input sequence length"
+    # check viterbi path
+    assert viterbi_path == full_input['best_hidden_state_sequence'], "Viterbi path does not match expected path"
