@@ -1,7 +1,17 @@
 # HW6-HMM
 
+[![HW6-test](https://github.com/abearab/HW6-HMM/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/abearab/HW6-HMM/actions/workflows/main.yml)
+
 In this assignment, you'll implement the Forward and Viterbi Algorithms (dynamic programming). 
 
+
+I found [this video series](https://www.youtube.com/playlist?list=PLM8wYQRetTxBkdvBtz-gw8b9lcVkdXQKV) helpful for understanding the hidden markov model and the forward algorithm. _The efficient way to compute the probability of a sequence of observations given a model is to use the forward algorithm_.
+
+Also, I found these two github repos helpful for understanding the viterbi algorithm:
+- https://github.com/ghadlich/ViterbiAlgorithm/blob/main/python/ViterbiAlgorithm.py
+- https://github.com/AzharuddinKazi/Forward-Algorithm-HMM/blob/master/Forward_Algorithm_HMM.py
+
+<details><summary>Click here</summary>
 
 # Assignment
 
@@ -83,3 +93,5 @@ Push your code to GitHub with passing unit tests, and submit a link to your repo
 
 * Extra credit (0.5 points)
     * Pip installable and Github actions (0.5)
+
+</details>
