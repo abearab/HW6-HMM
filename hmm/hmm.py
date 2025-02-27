@@ -49,7 +49,7 @@ class HiddenMarkovModel:
 
         ### Step 1. Initialize variables
         
-        if input_types == {str}:
+        if input_types == {str} or input_types == {np.str_}:
             states = [self.observation_states_dict[s] for s in input_observation_states]
         else:
             states = input_observation_states
