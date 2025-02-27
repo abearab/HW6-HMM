@@ -1,20 +1,20 @@
 [build-system]
-requires = [
-	"flit_core >=3.2,<4",
-	"python_version >='3.7'"
-	]
-build-backend = "flit_core.buildapi"
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
 
-[project]
+[tool.poetry]
 name = "hmm"
-authors = [{name = "Shu Zhang", email = "shu.zhang2@ucsf.edu"}]
+version = "0.2.5"
+authors = ["Abolfazl Arab <abolfazl.arab@ucsf.edu>", "Shu Zhang <shu.zhang2@ucsf.edu>"]
 readme = "README.md"
-license = {file = "LICENSE"}
+license = "MIT"
 classifiers = ["License :: OSI Approved :: MIT License"]
 dynamic = ["version", "description"]
-dependencies = [
-    "pytest", "numpy" 
-]
 
-[project.urls]
-Home = "https://github.com/BMI203-2024/HW6-HMM"
+[tool.poetry.dependencies]
+python = "^3.8"
+pytest = "^6.2"
+numpy = "^1.19"
+
+[tool.poetry.urls]
+homepage = "https://github.com/abearab/HW6-HMM"
